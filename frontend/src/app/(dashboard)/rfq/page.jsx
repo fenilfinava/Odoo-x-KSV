@@ -10,8 +10,15 @@ export default function RFQPage() {
   const [activeTab, setActiveTab] = useState("all");
   const [rfqs, setRfqs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const userData = JSON.parse(localStorage.getItem("user") || "{}");
+        setUserRole(userData.role || "");
+      } catch {}
+    }
     const fetchRFQs = async () => {
       try {
         const res = await api.get("/rfq");
@@ -47,13 +54,15 @@ export default function RFQPage() {
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Request for Quotation (RFQ)</h1>
           <p className="text-sm text-slate-500 mt-1">Manage your procurement requests and vendor quotes.</p>
         </div>
-        <Link 
-          href="/rfq/create" 
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus size={18} />
-          Create RFQ
-        </Link>
+        {["admin", "procurement_officer"].includes(userRole) && (
+          <Link 
+            href="/rfq/create" 
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Plus size={18} />
+            Create RFQ
+          </Link>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

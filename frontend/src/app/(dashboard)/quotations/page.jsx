@@ -11,6 +11,16 @@ export default function QuotationsPage() {
   const [activeTab, setActiveTab] = useState("all");
   const [quotations, setQuotations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const userData = JSON.parse(localStorage.getItem("user") || "{}");
+        setUserRole(userData.role || "");
+      } catch {}
+    }
+  }, []);
 
   const fetchQuotations = async () => {
     try {
@@ -52,13 +62,26 @@ export default function QuotationsPage() {
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Quotations</h1>
           <p className="text-sm text-slate-500 mt-1">Review, compare, and select vendor quotations.</p>
         </div>
-        <Link 
-          href="/quotations/compare"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
-        >
-          <ClipboardList size={18} />
-          Compare Quotes
-        </Link>
+        <div className="flex items-center gap-3">
+          {["admin", "procurement_officer"].includes(userRole) && (
+            <Link 
+              href="/quotations/compare"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+            >
+              <ClipboardList size={18} />
+              Compare Quotes
+            </Link>
+          )}
+          {["vendor"].includes(userRole) && (
+            <Link 
+              href="/quotations/submit"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Check size={18} />
+              Submit Quotation
+            </Link>
+          )}
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -126,6 +149,14 @@ export default function QuotationsPage() {
                     >
                       View <ArrowRight size={16} />
                     </Link>
+                    {userRole === "vendor" && quote.status === "Submitted" && (
+                      <Link
+                        href={`/quotations/submit`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                      >
+                        Edit
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>

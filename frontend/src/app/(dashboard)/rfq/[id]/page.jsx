@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { ArrowLeft, Calendar, Tag, Package, Building } from "lucide-react";
 import api from "@/lib/axios";
 import { toast } from "react-toastify";
@@ -11,8 +12,15 @@ export default function RFQDetailsPage() {
   const router = useRouter();
   const [rfq, setRfq] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const userData = JSON.parse(localStorage.getItem("user") || "{}");
+        setUserRole(userData.role || "");
+      } catch {}
+    }
     const fetchRFQ = async () => {
       try {
         const res = await api.get(`/rfq/${params.id}`);
@@ -44,19 +52,29 @@ export default function RFQDetailsPage() {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex items-center gap-4">
-        <button 
-          onClick={() => router.push("/rfq")}
-          className="p-2 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
-        >
-          <ArrowLeft size={18} />
-        </button>
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            {rfq.rfqNumber || `RFQ-${rfq.id}`} - {rfq.title}
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">View detailed requirements and items.</p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => router.push("/rfq")}
+            className="p-2 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+              {rfq.rfqNumber || `RFQ-${rfq.id}`} - {rfq.title}
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">View detailed requirements and items.</p>
+          </div>
         </div>
+        {userRole === "vendor" && rfq.status !== "Closed" && (
+          <Link 
+            href="/quotations/submit"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Submit Quotation
+          </Link>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
