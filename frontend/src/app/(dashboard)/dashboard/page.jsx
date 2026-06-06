@@ -72,7 +72,7 @@ export default function DashboardPage() {
 
       {/* Quick Action Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {["admin", "procurement_officer"].includes(roleKey) && (
+        {["procurement_officer"].includes(roleKey) && (
           <Link href="/rfq/create" className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
             <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
               <FileText className="text-blue-600" size={24} />
@@ -92,7 +92,7 @@ export default function DashboardPage() {
           </Link>
         )}
 
-        {["admin", "procurement_officer", "vendor"].includes(roleKey) && (
+        {["procurement_officer", "vendor"].includes(roleKey) && (
           <Link href="/invoices" className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:border-amber-300 hover:shadow-md transition-all">
             <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-amber-100 transition-colors">
               <Plus className="text-amber-600" size={24} />
