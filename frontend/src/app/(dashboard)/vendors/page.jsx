@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Star } from "lucide-react";
+import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Star, Ban } from "lucide-react";
 import api from "@/lib/axios";
+import { toast } from "react-toastify";
 
 export default function VendorsPage() {
   const [search, setSearch] = useState("");
@@ -39,6 +40,18 @@ export default function VendorsPage() {
     if (activeTab === "all") return true;
     return v.status.toLowerCase() === activeTab;
   });
+
+  const handleBlockVendor = async (id) => {
+    if (!confirm("Are you sure you want to block this vendor?")) return;
+    try {
+      await api.patch(`/vendors/${id}/status`, { status: "Blocked" });
+      setVendors(vendors.map(v => v.id === id ? { ...v, status: "Blocked" } : v));
+      toast.success("Vendor has been blocked successfully.");
+    } catch (error) {
+      console.error("Failed to block vendor:", error);
+      toast.error("Failed to block vendor.");
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -137,9 +150,20 @@ export default function VendorsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Link href={`/vendors/${vendor.id}`} className="px-4 py-1.5 border border-slate-300 text-slate-700 text-xs font-medium rounded-lg hover:bg-slate-50 transition-colors">
-                        View
-                      </Link>
+                      <div className="flex items-center justify-end gap-2">
+                        <Link href={`/vendors/${vendor.id}`} className="px-4 py-1.5 border border-slate-300 text-slate-700 text-xs font-medium rounded-lg hover:bg-slate-50 transition-colors">
+                          View
+                        </Link>
+                        {userRole === 'admin' && vendor.status !== 'Blocked' && (
+                          <button 
+                            onClick={() => handleBlockVendor(vendor.id)}
+                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" 
+                            title="Block Vendor"
+                          >
+                            <Ban size={16} />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
