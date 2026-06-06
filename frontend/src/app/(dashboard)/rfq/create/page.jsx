@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Plus, Trash2, Send } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, Send, Paperclip } from "lucide-react";
 import api from "@/lib/axios";
 import { toast } from "react-toastify";
 
@@ -132,6 +132,19 @@ export default function CreateRFQPage() {
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-slate-700 mb-2">Description / Notes</label>
                 <textarea name="description" value={formData.description} onChange={handleChange} rows={3} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Add any special instructions..."></textarea>
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2">Attachments</label>
+                <div className="flex items-center justify-center w-full">
+                  <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <Paperclip className="w-8 h-8 mb-3 text-slate-400" />
+                      <p className="mb-2 text-sm text-slate-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                      <p className="text-xs text-slate-500">PDF, DOCX, XLSX (MAX. 10MB)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" className="hidden" multiple />
+                  </label>
+                </div>
               </div>
             </div>
           </div>

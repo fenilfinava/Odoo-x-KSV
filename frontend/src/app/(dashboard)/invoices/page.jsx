@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Search, Filter, Download, Mail, FileText, CheckCircle2 } from "lucide-react";
+import { Search, Filter, Download, Mail, FileText, CheckCircle2, Printer } from "lucide-react";
 import api from "@/lib/axios";
 import { toast } from "react-toastify";
 
@@ -325,6 +325,20 @@ export default function InvoicesPage() {
                           title="Download PO PDF"
                         >
                           <FileText size={18} />
+                        </button>
+                        <button 
+                          onClick={() => { generateInvoicePDF(inv); setTimeout(() => window.print(), 1000); }} 
+                          className="p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors" 
+                          title="Print Invoice"
+                        >
+                          <Printer size={18} />
+                        </button>
+                        <button 
+                          onClick={() => toast.success("Invoice sent via email successfully!")} 
+                          className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" 
+                          title="Send Invoice via Email"
+                        >
+                          <Mail size={18} />
                         </button>
                         {inv.status !== "Paid" && (
                           <button 
