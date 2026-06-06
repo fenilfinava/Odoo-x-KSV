@@ -33,8 +33,34 @@ exports.updateApprovalStatus = async (req, res) => {
       .where({ id: req.params.id })
       .update({ status, remarks });
 
-    // In a real app, you would check if this was the final approval step
-    // and if so, trigger Purchase Order generation automatically.
+    if (status === 'Approved') {
+      // Auto-generate PO and Invoice
+      const approval = await db('approvals').where({ id: req.params.id }).first();
+      const quotation = await db('quotations').where({ id: approval.quotationId }).first();
+      
+      if (quotation) {
+        const poNumber = `PO-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+        
+        const [poId] = await db('purchase_orders').insert({
+          quotationId: quotation.id,
+          vendorId: quotation.vendorId,
+          poNumber,
+          amount: quotation.grandTotal,
+          status: 'Active',
+          expectedDelivery: new Date(Date.now() + quotation.deliveryDays * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+        });
+
+        const invoiceNumber = `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+        
+        await db('invoices').insert({
+          poId,
+          invoiceNumber,
+          amount: quotation.grandTotal,
+          status: 'Pending',
+          dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+        });
+      }
+    }
 
     res.json({ message: `Approval ${status} successfully` });
   } catch (error) {
