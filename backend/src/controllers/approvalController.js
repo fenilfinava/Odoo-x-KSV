@@ -73,8 +73,19 @@ exports.createApproval = async (req, res) => {
   try {
     const { quotationId } = req.body;
     
-    // Set status of quotation to 'Selected'
+    const quotation = await db('quotations').where({ id: quotationId }).first();
+    if (!quotation) {
+      return res.status(404).json({ message: 'Quotation not found' });
+    }
+
+    // Set status of the chosen quotation to 'Selected'
     await db('quotations').where({ id: quotationId }).update({ status: 'Selected' });
+
+    // Set status of all other quotations for the same RFQ to 'Rejected'
+    await db('quotations')
+      .where({ rfqId: quotation.rfqId })
+      .whereNot({ id: quotationId })
+      .update({ status: 'Rejected' });
 
     // Create a new approval request in the database
     const [id] = await db('approvals').insert({
