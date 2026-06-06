@@ -5,10 +5,12 @@ import Link from "next/link";
 import { ArrowLeft, CheckCircle2, ShieldCheck, AlertCircle } from "lucide-react";
 import api from "@/lib/axios";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function CompareQuotationsPage() {
   const [vendors, setVendors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchQuotations = async () => {
@@ -123,11 +125,23 @@ export default function CompareQuotationsPage() {
                 {vendors.map((v, i) => (
                   <td key={v.id} className={`p-4 border border-slate-200 text-center ${v.isLowest ? 'bg-green-50/30 border-x-2 border-b-2 border-green-200 rounded-b-lg' : ''} ${i === vendors.length - 1 ? 'rounded-br-xl' : ''}`}>
                     {v.isLowest ? (
-                      <button className="inline-flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-sm w-full justify-center">
+                      <button 
+                        onClick={() => {
+                          toast.success("Vendor selected! Initiating approval workflow...");
+                          setTimeout(() => router.push("/approvals"), 1500);
+                        }}
+                        className="inline-flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-sm w-full justify-center"
+                      >
                         <ShieldCheck size={18} /> Select & Approve
                       </button>
                     ) : (
-                      <button className="inline-flex items-center gap-2 px-6 py-2.5 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition-colors w-full justify-center">
+                      <button 
+                        onClick={() => {
+                          toast.success("Vendor selected! Initiating approval workflow...");
+                          setTimeout(() => router.push("/approvals"), 1500);
+                        }}
+                        className="inline-flex items-center gap-2 px-6 py-2.5 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition-colors w-full justify-center"
+                      >
                         Select
                       </button>
                     )}

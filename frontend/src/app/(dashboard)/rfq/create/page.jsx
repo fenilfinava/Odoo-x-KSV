@@ -205,7 +205,7 @@ export default function CreateRFQPage() {
                 {vendors.length === 0 ? (
                   <p className="text-sm text-slate-500 col-span-2">No vendors available. Add a vendor first.</p>
                 ) : (
-                  vendors.filter(v => v.status === 'Active').map((vendor) => (
+                  vendors.filter(v => v.status !== 'Blocked').map((vendor) => (
                     <label key={vendor.id} className={`flex items-center gap-3 p-3 bg-white border rounded-lg cursor-pointer hover:border-blue-300 transition-colors ${selectedVendors.includes(vendor.id) ? 'border-blue-500 bg-blue-50' : 'border-slate-200'}`}>
                       <input 
                         type="checkbox" 
