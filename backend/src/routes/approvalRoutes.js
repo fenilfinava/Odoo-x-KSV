@@ -6,6 +6,7 @@ const { verifyToken } = require('../middleware/authMiddleware');
 router.use(verifyToken);
 
 router.get('/', approvalController.getAllApprovals);
+router.post('/', approvalController.createApproval);
 router.patch('/:id/status', approvalController.updateApprovalStatus);
 
 module.exports = router;

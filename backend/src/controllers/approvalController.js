@@ -42,3 +42,25 @@ exports.updateApprovalStatus = async (req, res) => {
     res.status(500).json({ message: 'Server error updating approval' });
   }
 };
+
+exports.createApproval = async (req, res) => {
+  try {
+    const { quotationId } = req.body;
+    
+    // Set status of quotation to 'Selected'
+    await db('quotations').where({ id: quotationId }).update({ status: 'Selected' });
+
+    // Create a new approval request in the database
+    const [id] = await db('approvals').insert({
+      quotationId,
+      step: 'L1',
+      status: 'Pending',
+      remarks: ''
+    });
+
+    res.status(201).json({ message: 'Approval workflow initiated successfully', id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error creating approval' });
+  }
+};
