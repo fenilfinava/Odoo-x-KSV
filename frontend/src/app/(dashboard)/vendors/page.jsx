@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Star, Ban } from "lucide-react";
+import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Star, Ban, CheckCircle } from "lucide-react";
 import api from "@/lib/axios";
 import { toast } from "react-toastify";
 
@@ -50,6 +50,17 @@ export default function VendorsPage() {
     } catch (error) {
       console.error("Failed to block vendor:", error);
       toast.error("Failed to block vendor.");
+    }
+  };
+
+  const handleApproveVendor = async (id) => {
+    try {
+      await api.patch(`/vendors/${id}/status`, { status: "Active" });
+      setVendors(vendors.map(v => v.id === id ? { ...v, status: "Active" } : v));
+      toast.success("Vendor has been approved and is now active.");
+    } catch (error) {
+      console.error("Failed to approve vendor:", error);
+      toast.error("Failed to approve vendor.");
     }
   };
 
@@ -161,6 +172,15 @@ export default function VendorsPage() {
                             title="Block Vendor"
                           >
                             <Ban size={16} />
+                          </button>
+                        )}
+                        {userRole === 'admin' && vendor.status !== 'Active' && (
+                          <button 
+                            onClick={() => handleApproveVendor(vendor.id)}
+                            className="p-1.5 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors" 
+                            title="Approve / Activate Vendor"
+                          >
+                            <CheckCircle size={16} />
                           </button>
                         )}
                       </div>
