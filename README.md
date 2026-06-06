@@ -3,9 +3,7 @@
 VendorBridge is a comprehensive Procurement & Vendor Management ERP system designed to digitize and streamline procurement operations for organizations. The platform centralizes vendor management, RFQ (Request for Quotation) creation, quotation comparison, multi-level approvals, and invoice generation—eliminating manual inefficiencies and enabling real-time procurement tracking.
 
 ## 🚀 Live Demo
-**URL:** [https://odoo-x-ksv-two.vercel.app](https://odoo-x-ksv-two.vercel.app)  
-**Test Login:** `admin@vendorbridge.com`  
-**Password:** `password123`
+**URL:** [https://odoo-x-ksv-two.vercel.app](https://odoo-x-ksv-two.vercel.app)
 
 ## Features
 
@@ -54,9 +52,6 @@ VendorBridge is a comprehensive Procurement & Vendor Management ERP system desig
     ```
     The frontend will start on `http://localhost:3000`.
 
-## Default Login Credentials
-*   **Email:** `admin@vendorbridge.com`
-*   **Password:** `password123`
 
 ## License
 MIT License
