@@ -167,9 +167,9 @@ export default function RFQPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button className="text-blue-600 hover:text-blue-800 text-sm font-medium hover:underline">
+                      <Link href={`/rfq/${rfq.id}`} className="text-blue-600 hover:text-blue-800 text-sm font-medium hover:underline">
                         View Details
-                      </button>
+                      </Link>
                     </td>
                   </tr>
                 ))
