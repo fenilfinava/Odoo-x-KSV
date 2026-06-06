@@ -2,15 +2,32 @@
 
 import React, { useState } from "react";
 import { Search, Plus, User, Shield, Mail, Edit, Trash2 } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function UsersPage() {
   const [search, setSearch] = useState("");
-  const [users] = useState([
+  const [users, setUsers] = useState([
     { id: 1, name: "System Admin", email: "admin@vendorbridge.com", role: "Admin", status: "Active" },
     { id: 2, name: "Fenil Finava", email: "fenil@vendorbridge.com", role: "Procurement Officer", status: "Active" },
     { id: 3, name: "John Doe", email: "john@vendorbridge.com", role: "Manager / Approver", status: "Active" },
     { id: 4, name: "Jane Smith", email: "jane@vendorbridge.com", role: "Procurement Officer", status: "Inactive" },
   ]);
+
+  const handleEdit = (id) => {
+    const user = users.find(u => u.id === id);
+    const newName = prompt(`Enter new name for ${user.name}:`, user.name);
+    if (newName) {
+      setUsers(users.map(u => u.id === id ? { ...u, name: newName } : u));
+      toast.success("User updated successfully");
+    }
+  };
+
+  const handleDelete = (id) => {
+    if (confirm("Are you sure you want to delete this user?")) {
+      setUsers(users.filter(u => u.id !== id));
+      toast.success("User deleted successfully");
+    }
+  };
 
   const filteredUsers = users.filter(u => 
     u.name.toLowerCase().includes(search.toLowerCase()) || 
@@ -93,10 +110,10 @@ export default function UsersPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit User">
+                        <button onClick={() => handleEdit(user.id)} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit User">
                           <Edit size={16} />
                         </button>
-                        <button className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete User">
+                        <button onClick={() => handleDelete(user.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete User">
                           <Trash2 size={16} />
                         </button>
                       </div>
