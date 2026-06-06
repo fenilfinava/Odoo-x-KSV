@@ -21,13 +21,13 @@ import {
 // Role-based navigation config
 const allNavItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["admin", "procurement_officer", "approver", "vendor"] },
-  { name: "Vendors", href: "/vendors", icon: Users, roles: ["admin", "procurement_officer"] },
-  { name: "RFQs", href: "/rfq", icon: FileText, roles: ["admin", "procurement_officer", "vendor"] },
-  { name: "Quotations", href: "/quotations", icon: ClipboardList, roles: ["admin", "procurement_officer", "vendor"] },
-  { name: "Approvals", href: "/approvals", icon: CheckSquare, roles: ["admin", "approver"] },
-  { name: "POs & Invoices", href: "/invoices", icon: FileSpreadsheet, roles: ["admin", "procurement_officer", "vendor"] },
-  { name: "Activity Logs", href: "/activity", icon: Activity, roles: ["admin", "procurement_officer", "approver", "vendor"] },
-  { name: "Reports", href: "/reports", icon: BarChart2, roles: ["admin", "approver"] },
+  { name: "Vendors", href: "/vendors", icon: Users, roles: ["admin"] },
+  { name: "RFQs", href: "/rfq", icon: FileText, roles: ["procurement_officer", "vendor"] },
+  { name: "Quotations", href: "/quotations", icon: ClipboardList, roles: ["procurement_officer", "vendor"] },
+  { name: "Approvals", href: "/approvals", icon: CheckSquare, roles: ["approver"] },
+  { name: "POs & Invoices", href: "/invoices", icon: FileSpreadsheet, roles: ["procurement_officer", "vendor"] },
+  { name: "Activity Logs", href: "/activity", icon: Activity, roles: ["approver"] },
+  { name: "Reports", href: "/reports", icon: BarChart2, roles: ["admin"] },
 ];
 
 const roleLabels = {
