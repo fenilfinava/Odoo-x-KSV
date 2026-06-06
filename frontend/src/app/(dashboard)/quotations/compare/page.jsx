@@ -1,42 +1,63 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, ShieldCheck } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ShieldCheck, AlertCircle } from "lucide-react";
+import api from "@/lib/axios";
+import { toast } from "react-toastify";
 
 export default function CompareQuotationsPage() {
-  const vendors = [
-    {
-      id: "V1",
-      name: "Infra Supplies (Lowest)",
-      total: "₹ 1,85,400",
-      gst: "18%",
-      delivery: "10 days",
-      rating: "4.5 / 5",
-      paymentTerms: "30 days",
-      isLowest: true,
-    },
-    {
-      id: "V2",
-      name: "TechCore LTD",
-      total: "₹ 2,00,010",
-      gst: "18%",
-      delivery: "14 days",
-      rating: "4.2 / 5",
-      paymentTerms: "30 days",
-      isLowest: false,
-    },
-    {
-      id: "V3",
-      name: "Office Need Co.",
-      total: "₹ 2,14,800",
-      gst: "18%",
-      delivery: "7 days",
-      rating: "3.8 / 5",
-      paymentTerms: "15 days",
-      isLowest: false,
-    }
-  ];
+  const [vendors, setVendors] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchQuotations = async () => {
+      try {
+        const res = await api.get("/quotations");
+        const quotes = res.data;
+        if (quotes.length === 0) {
+          setVendors([]);
+          return;
+        }
+
+        const minTotal = Math.min(...quotes.map(q => q.grandTotal));
+
+        const formattedVendors = quotes.map(q => ({
+          id: q.id,
+          name: q.vendorName || `Vendor ${q.vendorId}`,
+          total: `₹ ${q.grandTotal.toLocaleString()}`,
+          gst: `${q.gstPercent}%`,
+          delivery: `${q.deliveryDays} days`,
+          rating: "N/A",
+          paymentTerms: "30 days",
+          isLowest: q.grandTotal === minTotal,
+          rfqTitle: q.rfqTitle
+        }));
+
+        setVendors(formattedVendors);
+      } catch (error) {
+        console.error("Failed to fetch quotations:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchQuotations();
+  }, []);
+
+  if (loading) {
+    return <div className="p-8 text-center text-slate-500">Loading comparison...</div>;
+  }
+
+  if (vendors.length === 0) {
+    return (
+      <div className="p-12 text-center bg-white rounded-2xl shadow-sm border border-slate-100 mt-6">
+        <AlertCircle size={48} className="mx-auto text-amber-500 mb-4" />
+        <h2 className="text-xl font-semibold text-slate-800">No Quotations Found</h2>
+        <p className="text-slate-500 mt-2">There are no submitted quotations to compare yet.</p>
+        <Link href="/quotations" className="inline-block mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Go Back</Link>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -49,7 +70,7 @@ export default function CompareQuotationsPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Quotation Comparison</h1>
-          <p className="text-sm text-slate-500 mt-1">RFQ: Office Furniture Procurement Q2 - 3 quotations received</p>
+          <p className="text-sm text-slate-500 mt-1">{vendors.length} quotations received</p>
         </div>
       </div>
 
