@@ -14,6 +14,7 @@ export default function DashboardPage() {
   });
   const [userName, setUserName] = useState("");
   const [userRole, setUserRole] = useState("");
+  const [roleKey, setRoleKey] = useState("");
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -37,6 +38,7 @@ export default function DashboardPage() {
           vendor: "Vendor",
         };
         setUserRole(roleMap[userData.role] || userData.role || "User");
+        setRoleKey(userData.role || "");
       } catch {}
     }
   }, []);
@@ -70,29 +72,35 @@ export default function DashboardPage() {
 
       {/* Quick Action Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Link href="/rfq/create" className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
-          <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
-            <FileText className="text-blue-600" size={24} />
-          </div>
-          <h3 className="text-lg font-bold text-slate-900 mb-1">Create New RFQ</h3>
-          <p className="text-sm text-slate-500">Request quotations from vendors for your procurement needs.</p>
-        </Link>
+        {["admin", "procurement_officer"].includes(roleKey) && (
+          <Link href="/rfq/create" className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
+            <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
+              <FileText className="text-blue-600" size={24} />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 mb-1">Create New RFQ</h3>
+            <p className="text-sm text-slate-500">Request quotations from vendors for your procurement needs.</p>
+          </Link>
+        )}
 
-        <Link href="/vendors/add" className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:border-green-300 hover:shadow-md transition-all">
-          <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-100 transition-colors">
-            <Users className="text-green-600" size={24} />
-          </div>
-          <h3 className="text-lg font-bold text-slate-900 mb-1">Add New Vendor</h3>
-          <p className="text-sm text-slate-500">Register and manage your vendor partnerships.</p>
-        </Link>
+        {["admin"].includes(roleKey) && (
+          <Link href="/vendors/add" className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:border-green-300 hover:shadow-md transition-all">
+            <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-100 transition-colors">
+              <Users className="text-green-600" size={24} />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 mb-1">Add New Vendor</h3>
+            <p className="text-sm text-slate-500">Register and manage your vendor partnerships.</p>
+          </Link>
+        )}
 
-        <Link href="/invoices" className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:border-amber-300 hover:shadow-md transition-all">
-          <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-amber-100 transition-colors">
-            <Plus className="text-amber-600" size={24} />
-          </div>
-          <h3 className="text-lg font-bold text-slate-900 mb-1">View Invoices</h3>
-          <p className="text-sm text-slate-500">Track payments and manage invoice statuses.</p>
-        </Link>
+        {["admin", "procurement_officer", "vendor"].includes(roleKey) && (
+          <Link href="/invoices" className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:border-amber-300 hover:shadow-md transition-all">
+            <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-amber-100 transition-colors">
+              <Plus className="text-amber-600" size={24} />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 mb-1">View Invoices</h3>
+            <p className="text-sm text-slate-500">Track payments and manage invoice statuses.</p>
+          </Link>
+        )}
       </div>
     </div>
   );
