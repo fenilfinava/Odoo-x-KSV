@@ -327,7 +327,7 @@ export default function InvoicesPage() {
                           <FileText size={18} />
                         </button>
                         <button 
-                          onClick={() => { generateInvoicePDF(inv); setTimeout(() => window.print(), 1000); }} 
+                          onClick={() => generateInvoicePDF(inv)} 
                           className="p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors" 
                           title="Print Invoice"
                         >

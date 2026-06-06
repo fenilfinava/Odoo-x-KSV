@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Filter, CheckCircle, XCircle, Clock, ArrowRight, ShieldCheck } from "lucide-react";
+import { Search, CheckCircle, XCircle, Clock, ArrowRight, ShieldCheck } from "lucide-react";
 import api from "@/lib/axios";
 import { toast } from "react-toastify";
 
@@ -39,8 +39,11 @@ export default function ApprovalsPage() {
   };
 
   const filteredApprovals = approvals.filter(a => {
-    if (activeTab.toLowerCase() === "history") return a.status !== "Pending";
-    return a.status.toLowerCase() === activeTab.toLowerCase();
+    const matchesTab = activeTab.toLowerCase() === "history" ? a.status !== "Pending" : a.status.toLowerCase() === activeTab.toLowerCase();
+    const matchesSearch = !search ||
+      (a.rfqTitle || "").toLowerCase().includes(search.toLowerCase()) ||
+      (a.vendorName || "").toLowerCase().includes(search.toLowerCase());
+    return matchesTab && matchesSearch;
   });
 
   return (
@@ -65,7 +68,7 @@ export default function ApprovalsPage() {
               }`}
             >
               {tab}
-              {tab === "Pending" && (
+              {tab === "pending" && (
                 <span className="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-100 text-red-600 text-xs">
                   {approvals.filter(a => a.status === "Pending").length}
                 </span>
@@ -86,10 +89,6 @@ export default function ApprovalsPage() {
               className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
             />
           </div>
-          <button className="inline-flex items-center gap-2 px-4 py-2 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors w-full sm:w-auto justify-center">
-            <Filter size={18} />
-            Filters
-          </button>
         </div>
 
         {/* Approvals List */}

@@ -28,37 +28,50 @@ exports.getAllApprovals = async (req, res) => {
 exports.updateApprovalStatus = async (req, res) => {
   try {
     const { status, remarks } = req.body;
+
+    // Validate status
+    if (!['Approved', 'Rejected', 'Pending'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status value' });
+    }
+
+    // Check if approval exists
+    const approval = await db('approvals').where({ id: req.params.id }).first();
+    if (!approval) {
+      return res.status(404).json({ message: 'Approval not found' });
+    }
     
     await db('approvals')
       .where({ id: req.params.id })
-      .update({ status, remarks });
+      .update({ status, remarks, approverId: req.userId });
 
     if (status === 'Approved') {
-      // Auto-generate PO and Invoice
-      const approval = await db('approvals').where({ id: req.params.id }).first();
-      const quotation = await db('quotations').where({ id: approval.quotationId }).first();
-      
-      if (quotation) {
-        const poNumber = `PO-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+      // Check if PO already exists for this quotation (prevent duplicates)
+      const existingPO = await db('purchase_orders').where({ quotationId: approval.quotationId }).first();
+      if (!existingPO) {
+        const quotation = await db('quotations').where({ id: approval.quotationId }).first();
         
-        const [poId] = await db('purchase_orders').insert({
-          quotationId: quotation.id,
-          vendorId: quotation.vendorId,
-          poNumber,
-          amount: quotation.grandTotal,
-          status: 'Active',
-          expectedDelivery: new Date(Date.now() + quotation.deliveryDays * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-        });
+        if (quotation) {
+          const poNumber = `PO-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+          
+          const [poId] = await db('purchase_orders').insert({
+            quotationId: quotation.id,
+            vendorId: quotation.vendorId,
+            poNumber,
+            amount: quotation.grandTotal,
+            status: 'Active',
+            expectedDelivery: new Date(Date.now() + (quotation.deliveryDays || 14) * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+          });
 
-        const invoiceNumber = `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-        
-        await db('invoices').insert({
-          poId,
-          invoiceNumber,
-          amount: quotation.grandTotal,
-          status: 'Pending',
-          dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-        });
+          const invoiceNumber = `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+          
+          await db('invoices').insert({
+            poId,
+            invoiceNumber,
+            amount: quotation.grandTotal,
+            status: 'Pending',
+            dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+          });
+        }
       }
     }
 
@@ -78,6 +91,12 @@ exports.createApproval = async (req, res) => {
       return res.status(404).json({ message: 'Quotation not found' });
     }
 
+    // Check if approval already exists for this quotation
+    const existingApproval = await db('approvals').where({ quotationId }).first();
+    if (existingApproval) {
+      return res.status(400).json({ message: 'Approval already exists for this quotation' });
+    }
+
     // Set status of the chosen quotation to 'Selected'
     await db('quotations').where({ id: quotationId }).update({ status: 'Selected' });
 
@@ -87,9 +106,13 @@ exports.createApproval = async (req, res) => {
       .whereNot({ id: quotationId })
       .update({ status: 'Rejected' });
 
+    // Update the RFQ status to 'Under Review'
+    await db('rfqs').where({ id: quotation.rfqId }).update({ status: 'Under Review' });
+
     // Create a new approval request in the database
     const [id] = await db('approvals').insert({
       quotationId,
+      approverId: req.userId,
       step: 'L1',
       status: 'Pending',
       remarks: ''

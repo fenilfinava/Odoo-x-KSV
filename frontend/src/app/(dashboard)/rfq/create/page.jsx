@@ -77,6 +77,7 @@ export default function CreateRFQPage() {
       await api.post("/rfq", {
         ...formData,
         items: items.map(({ name, quantity, unit }) => ({ name, quantity: Number(quantity), unit })),
+        vendorIds: selectedVendors,
       });
       toast.success("RFQ created and sent successfully!");
       router.push("/rfq");

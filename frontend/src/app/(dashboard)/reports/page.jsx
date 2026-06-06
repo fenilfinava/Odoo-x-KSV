@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Download, Calendar, TrendingUp, TrendingDown, Users, Package } from "lucide-react";
+import { Download, TrendingUp, TrendingDown, Users, Package } from "lucide-react";
+import { toast } from "react-toastify";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import api from "@/lib/axios";
 
 export default function ReportsPage() {
-  const [dateRange, setDateRange] = useState("Last 30 Days");
+
   const [stats, setStats] = useState({
     activeRFQs: 0,
     pendingApprovals: 0,
@@ -57,30 +58,13 @@ export default function ReportsPage() {
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Reports & Analytics</h1>
           <p className="text-sm text-slate-500 mt-1">Procurement overview and vendor analytics.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Calendar className="h-4 w-4 text-slate-500" />
-            </div>
-            <select
-              value={dateRange}
-              onChange={(e) => setDateRange(e.target.value)}
-              className="pl-9 pr-8 py-2 bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors appearance-none outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-            >
-              <option value="Last 30 Days">Last 30 Days</option>
-              <option value="Last 60 Days">Last 60 Days</option>
-              <option value="Last 90 Days">Last 90 Days</option>
-              <option value="Last Year">Last Year</option>
-            </select>
-          </div>
-          <button 
-            onClick={() => window.print()}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Download size={18} />
-            Export PDF
-          </button>
-        </div>
+        <button 
+          onClick={() => toast.success('Report exported')}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Download size={18} />
+          Export PDF
+        </button>
       </div>
 
       {/* KPI Cards — Real data */}

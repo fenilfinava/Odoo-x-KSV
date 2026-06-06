@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Star, Ban, CheckCircle } from "lucide-react";
+import { Plus, Search, MoreVertical, Edit2, Eye, Trash2, Star, Ban, CheckCircle } from "lucide-react";
 import api from "@/lib/axios";
 import { toast } from "react-toastify";
 
@@ -37,8 +37,12 @@ export default function VendorsPage() {
   }, []);
 
   const filteredVendors = vendors.filter(v => {
-    if (activeTab === "all") return true;
-    return v.status.toLowerCase() === activeTab;
+    const matchesTab = activeTab === "all" || v.status.toLowerCase() === activeTab;
+    const matchesSearch = !search ||
+      (v.name || "").toLowerCase().includes(search.toLowerCase()) ||
+      (v.email || "").toLowerCase().includes(search.toLowerCase()) ||
+      (v.category || "").toLowerCase().includes(search.toLowerCase());
+    return matchesTab && matchesSearch;
   });
 
   const handleBlockVendor = async (id) => {
@@ -112,10 +116,6 @@ export default function VendorsPage() {
               className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
             />
           </div>
-          <button className="inline-flex items-center gap-2 px-4 py-2 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors w-full sm:w-auto justify-center">
-            <Filter size={18} />
-            Filters
-          </button>
         </div>
 
         {/* Table */}

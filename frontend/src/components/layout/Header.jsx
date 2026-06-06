@@ -18,11 +18,18 @@ export default function Header({ setIsOpen }) {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    const firstName = localStorage.getItem("firstName") || "";
-    const lastName = localStorage.getItem("lastName") || "";
-    const email = localStorage.getItem("email") || "";
-    const role = localStorage.getItem("role") || "";
-    setUser({ firstName, lastName, email, role });
+    try {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        setUser({
+          firstName: parsed.firstName || '',
+          lastName: parsed.lastName || '',
+          email: parsed.email || '',
+          role: parsed.role || ''
+        });
+      }
+    } catch (e) {}
   }, []);
 
   // Close dropdown on outside click

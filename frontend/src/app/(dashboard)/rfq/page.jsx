@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, Search, Filter, FileText, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { Plus, Search, FileText, Clock, CheckCircle2, XCircle } from "lucide-react";
 import api from "@/lib/axios";
 
 export default function RFQPage() {
@@ -33,8 +33,11 @@ export default function RFQPage() {
   }, []);
 
   const filteredRfqs = rfqs.filter(r => {
-    if (activeTab === "all") return true;
-    return r.status.toLowerCase() === activeTab.toLowerCase();
+    const matchesTab = activeTab === "all" || r.status.toLowerCase() === activeTab.toLowerCase();
+    const matchesSearch = !search ||
+      (r.title || "").toLowerCase().includes(search.toLowerCase()) ||
+      (r.rfqNumber || "").toLowerCase().includes(search.toLowerCase());
+    return matchesTab && matchesSearch;
   });
 
   const getStatusColor = (status) => {
@@ -126,10 +129,6 @@ export default function RFQPage() {
               className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
             />
           </div>
-          <button className="inline-flex items-center gap-2 px-4 py-2 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors w-full sm:w-auto justify-center">
-            <Filter size={18} />
-            Filters
-          </button>
         </div>
 
         {/* Table */}

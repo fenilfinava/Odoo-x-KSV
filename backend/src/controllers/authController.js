@@ -24,7 +24,7 @@ exports.register = async (req, res) => {
       lastName,
       email,
       phone,
-      role: userCount === 0 ? 'admin' : (role || 'procurement_officer'),
+      role: userCount === 0 ? 'admin' : (['procurement_officer', 'vendor', 'manager'].includes(role) ? role : 'procurement_officer'),
       organization,
       country,
       additionalInfo,
