@@ -1,0 +1,10 @@
+node_modules/
+.next/
+dist/
+.env
+.env.*
+.DS_Store
+
+# Ignore Hackathon requirement files
+Vendorbridge Hackathon Problem Statement.pdf
+VendorBridge_Complete_PRD_v1.1.md
