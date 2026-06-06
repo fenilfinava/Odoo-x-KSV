@@ -21,6 +21,7 @@ import {
 // Role-based navigation config
 const allNavItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["admin", "procurement_officer", "approver", "vendor"] },
+  { name: "Users", href: "/users", icon: Shield, roles: ["admin"] },
   { name: "Vendors", href: "/vendors", icon: Users, roles: ["admin"] },
   { name: "RFQs", href: "/rfq", icon: FileText, roles: ["procurement_officer", "vendor"] },
   { name: "Quotations", href: "/quotations", icon: ClipboardList, roles: ["procurement_officer", "vendor"] },
